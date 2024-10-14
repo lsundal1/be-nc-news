@@ -33,7 +33,7 @@ test('GET: 200 - sends a list of topics to the client', () => {
         })
     })
 })
-describe.only('GET:/api', () => {
+describe('GET:/api', () => {
     test('GET:200 - responds with an object detailing all available endpoints', () => {
         return request(app)
             .get('/api')
