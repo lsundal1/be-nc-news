@@ -12,6 +12,16 @@ afterAll(() => {
     return db.end()
 })
 
+describe('GET:/api', () => {
+    test('200 - responds with an object detailing all available endpoints', () => {
+        return request(app)
+            .get('/api')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.endpoints).toEqual(endpoints)
+            }) 
+    })
+})
 describe('GET:/api/topics', () => {
 test('200 - sends a list of topics to the client', () => {
     return request(app)
@@ -32,19 +42,9 @@ describe('GET: 404 - bad request',() => {
         return request(app)
         .get('/api/giraffes')
         .expect(404)
-        .then((response) => {
-            expect(response.res.statusMessage).toBe('Not Found')
+        .then(({res}) => {
+            expect(res.statusMessage).toBe('Not Found')
         })
-    })
-})
-describe('GET:/api', () => {
-    test('200 - responds with an object detailing all available endpoints', () => {
-        return request(app)
-            .get('/api')
-            .expect(200)
-            .then(({body}) => {
-                expect(body.endpoints).toEqual(endpoints)
-            }) 
     })
 })
 describe('GET:/api/articles/:article_id', () => {
@@ -72,16 +72,47 @@ describe('GET:/api/articles/:article_id', () => {
         return request(app)
             .get('/api/articles/scooby')
             .expect(400)
-            .then((response) => {
-                expect(response.body.msg).toBe('bad request');
+            .then(({body}) => {
+                expect(body.msg).toBe('Invalid id type')
             })
     })
-    test('404 - responds with 404 Not Found when given no id',() => {
+})
+describe('GET:/api/articles', () => {
+    test('200 - responds with an array of all articles',() => {
         return request(app)
             .get('/api/articles')
-            .expect(404)
-            .then(({res}) => {
-                expect(res.statusMessage).toBe('Not Found');
+            .expect(200)
+            .then(({body}) => {
+                body.articles.forEach(article => {
+                    expect(article).toMatchObject({
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    article_id: expect.any(Number),
+                    topic: expect.any(String),
+                    created_at: expect.any(String), 
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                    comment_count: expect.any(String)
+                })
+            })
+        })
+    })
+    test('200 - articles are ordered by date descending by default', () => {
+        return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.articles).toBeSortedBy('created_at', { descending: true });
+            })
+    })
+    test('200 - there should be no body property present on any of the articles', () => {
+        return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then(({body}) => {
+                body.articles.forEach(article => {
+                    expect(!article.body).toBe(true)
+                })
             })
     })
 })
