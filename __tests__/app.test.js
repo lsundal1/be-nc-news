@@ -138,6 +138,14 @@ describe('GET:/api/articles', () => {
                     })
                 })
         })
+        test('200 - comments should be served with the most recent comments first', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then(({body}) => {
+                    expect(body.comments).toBeSortedBy('created_at', { descending: true });
+                })
+        })
         test('200 - returns an empty array when a valid article_id is provided but there are no associated comments', () => {
             return request(app)
                 .get('/api/articles/4/comments')

@@ -30,7 +30,7 @@ exports.fetchCommentsForArticle = (article) => {
 
     const id = article.article_id
 
-    const queryStr = `SELECT * FROM comments WHERE article_id=$1`
+    const queryStr = `SELECT * FROM comments WHERE article_id=$1 ORDER BY created_at DESC;`
     
     return db.query(queryStr,[id]).then(({rows}) => {
         return rows;
