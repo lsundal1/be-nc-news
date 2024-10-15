@@ -35,4 +35,21 @@ exports.fetchCommentsForArticle = (article) => {
     return db.query(queryStr,[id]).then(({rows}) => {
         return rows;
     })
-}   
+}  
+
+exports.addCommentOnArticle = (article, comment) => {
+
+    if( typeof comment.username !== 'string' || typeof comment.body !== 'string'){
+        return Promise.reject({ status: 400, msg: "bad request" });
+    }
+    
+    const { body } = comment;
+    const { article_id, author } = article;
+    
+    const query = 
+    `INSERT INTO comments (author, body, votes, article_id) VALUES ($1, $2, $3, $4) RETURNING *;` 
+    
+    return db.query(query,[author, body, 0, article_id]).then(({rows}) => {
+        return rows[0];
+    })
+}

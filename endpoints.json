@@ -74,5 +74,21 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a new comment to the specified article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [{
+        "newComment": {
+          "comment_id": 19,
+          "body": "She's a princess, and you're an ogre. That's something no amount of potion is ever going to change.",
+          "article_id": 4,
+          "author": "rogersop",
+          "votes": 0,
+          "created_at": "2024-10-15T13:13:20.809Z"
+        }
+      }]
+    }
   }
 }
