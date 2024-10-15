@@ -23,28 +23,27 @@ describe('GET:/api', () => {
     })
 })
 
-describe('GET: 404 - bad request',() => {
-    test('404 - returns 404 if endpoint does not exist', () => {
-        return request(app)
-        .get('/api/giraffes')
-        .expect(404)
-        .then(({res}) => {
-            expect(res.statusMessage).toBe('Not Found')
+describe('/api/topics', () => {
+    describe('GET', () => {
+        test('200 - sends a list of topics to the client', () => {
+            return request(app)
+            .get('/api/topics')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.topics.length).toBe(3)
+                expect
+                    body.topics.forEach(topic => {
+                        expect(typeof topic.description).toBe('string')
+                        expect(typeof topic.slug).toBe('string')
+                    })
+                })
         })
-    })
-})
-
-describe('GET:/api/topics', () => {
-test('200 - sends a list of topics to the client', () => {
-    return request(app)
-    .get('/api/topics')
-    .expect(200)
-    .then(({body}) => {
-        expect(body.topics.length).toBe(3)
-        expect
-            body.topics.forEach(topic => {
-                expect(typeof topic.description).toBe('string')
-                expect(typeof topic.slug).toBe('string')
+        test('404 - returns 404 if endpoint does not exist', () => {
+            return request(app)
+            .get('/api/giraffes')
+            .expect(404)
+            .then(({res}) => {
+                expect(res.statusMessage).toBe('Not Found')
             })
         })
     })
@@ -90,6 +89,14 @@ describe('/api/articles', () => {
                             expect(!article.body).toBe(true)
                         })
                     })
+            })
+            test('404 - returns 404 if endpoint does not exist', () => {
+                return request(app)
+                .get('/api/giraffes')
+                .expect(404)
+                .then(({res}) => {
+                    expect(res.statusMessage).toBe('Not Found')
+                })
             })
         })
         describe('/api/articles/:article_id', () => {
@@ -313,4 +320,36 @@ describe('/api/comments', () => {
             })
         })
     })
+})
+
+describe('/api/users', () => {
+    describe('GET', () => {
+        describe('/api/users', () => {
+            test('200 - responds with an array of all users',() => {
+                return request(app)
+                    .get('/api/users')
+                    .expect(200)
+                    .then(({body}) => {
+                        const { users } = body
+                        expect(users.length).toBe(4)
+                        users.forEach(user => {
+                            expect(user).toMatchObject({
+                            username: expect.any(String),
+                            name: expect.any(String),
+                            avatar_url: expect.any(String)
+                        })
+                    })
+                })
+            })
+            test('404 - returns 404 if endpoint does not exist', () => {
+                return request(app)
+                .get('/api/giraffes')
+                .expect(404)
+                .then(({res}) => {
+                    expect(res.statusMessage).toBe('Not Found')
+                })
+            })
+        })
+    })
+    
 })

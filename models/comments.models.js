@@ -8,6 +8,6 @@ exports.removeComment = (comment_id) => {
     return db.query(query,[comment_id]).then(({rowCount}) => {
         if (rowCount === 0) {
             return Promise.reject({ status: 404, msg: 'Comment not found' });
-        }
+        } 
     })
 }
