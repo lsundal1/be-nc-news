@@ -17,7 +17,6 @@ exports.fetchArticles = () => {
 
 exports.fetchArticlesById = (article_id) => {
 
-
     return db.query(`SELECT * FROM articles WHERE article_id=$1;`, [article_id]).then(({rows}) => {
         if (rows.length === 0){
             return Promise.reject({ status: 404, msg: 'article does not exist'})
@@ -26,3 +25,14 @@ exports.fetchArticlesById = (article_id) => {
         }
     })
 }
+
+exports.fetchCommentsForArticle = (article) => {
+
+    const id = article.article_id
+
+    const queryStr = `SELECT * FROM comments WHERE article_id=$1`
+    
+    return db.query(queryStr,[id]).then(({rows}) => {
+        return rows;
+    })
+}   
