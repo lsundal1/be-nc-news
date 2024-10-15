@@ -46,10 +46,28 @@ exports.addCommentOnArticle = (article, comment) => {
     const { body } = comment;
     const { article_id, author } = article;
     
+    const params = [author, body, 0, article_id]
     const query = 
     `INSERT INTO comments (author, body, votes, article_id) VALUES ($1, $2, $3, $4) RETURNING *;` 
     
-    return db.query(query,[author, body, 0, article_id]).then(({rows}) => {
+    return db.query(query,params).then(({rows}) => {
         return rows[0];
+    })
+}
+
+exports.updateArticleVote = (article, body) => {
+
+    const { article_id } = article
+    const { inc_votes } = body
+
+    if(typeof body.inc_votes !== 'number'){
+        return Promise.reject({ status: 400, msg: "bad request" });
+    }
+
+    const params = [inc_votes, article_id]
+    const query = `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`
+
+    return db.query(query,params).then(({rows}) => {
+        return rows[0]
     })
 }

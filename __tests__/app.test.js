@@ -232,4 +232,54 @@ describe('/api/articles', () => {
             })
         })
     })
+    describe('PATCH', () => {
+        describe('/api/articles/:article_id', () => {
+            test('200: - responds with an updated article', () => {
+                return request(app)
+                    .patch('/api/articles/4')
+                    .send({ inc_votes : 1 })
+                    .expect(200)
+                    .then(({body}) => {
+                        const { updatedArticle } = body
+                        expect(updatedArticle.votes).toBe(1)
+                    })
+            })
+            test('404 - responds with 404 "article does not exist" when given a valid id that is not present',() => {
+                return request(app)
+                    .patch('/api/articles/999')
+                    .send({ inc_votes : 1 })
+                    .expect(404)
+                    .then((response) => {
+                        expect(response.body.msg).toBe('article does not exist');
+                    })
+            })
+            test('400 - responds with 400 bad request when given a non-valid id',() => {
+                return request(app)
+                    .patch('/api/articles/scooby')
+                    .send({ inc_votes : 1 })
+                    .expect(400)
+                    .then(({body}) => {
+                        expect(body.msg).toBe('Invalid id type')
+                    })
+            })
+            test('400 - bad request, body does not include correct properties', () => {
+                return request(app)
+                    .patch('/api/articles/4')
+                    .send({})
+                    .expect(400)
+                    .then(({body}) => {
+                        expect(body.msg).toBe("bad request");
+                    })
+            })
+            test('400 - bad request, body does not include correct properties', () => {
+                return request(app)
+                    .patch('/api/articles/4')
+                    .send({ inc_votes : '1' })
+                    .expect(400)
+                    .then(({body}) => {
+                        expect(body.msg).toBe("bad request");
+                    })
+            })
+        })
+    })
 })
