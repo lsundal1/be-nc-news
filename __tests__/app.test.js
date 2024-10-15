@@ -283,3 +283,34 @@ describe('/api/articles', () => {
         })
     })
 })
+
+describe('/api/comments', () => {
+    describe('DELETE', () => {
+        describe('/api/comments/:comment_id', () => {
+            test('204: - deletes comment by comment_id', () => {
+                return request(app)
+                .delete('/api/comments/1')
+                .expect(204)
+                .then(({res}) => {
+                    expect(res.statusMessage).toBe('No Content')
+                })
+            })
+            test('404 - responds with 404 "Not found" when given a valid id that is not present',() => {
+                return request(app)
+                    .delete('/api/comments/999')
+                    .expect(404)
+                    .then(({body}) => {
+                        expect(body.msg).toBe('Comment not found')
+                    })
+            })
+            test('400 - responds with 400 bad request when given a non-valid id',() => {
+                return request(app)
+                    .delete('/api/comments/scooby')
+                    .expect(400)
+                    .then(({body}) => {
+                        expect(body.msg).toBe('Invalid id type')
+                    })
+            })
+        })
+    })
+})
