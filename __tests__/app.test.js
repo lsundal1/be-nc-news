@@ -151,16 +151,33 @@ describe('/api/articles', () => {
             })
         })
         describe('/api/articles/:article_id', () => {
-            test('200 - responds with an article when given a valid id',() => {
+            test.only('200 - responds with an article when given a valid id',() => {
                 return request(app)
                     .get('/api/articles/4')
                     .expect(200)
                     .then(({body}) => {
+                        expect(body.article.article_id).toBe(4)
                         expect(body.article.title).toBe("Student SUES Mitch!")
                         expect(body.article.topic).toBe("mitch")
                         expect(body.article.author).toBe("rogersop")
-                        expect(typeof body.article.created_at).toBe('string') 
-                        expect(typeof body.article.article_img_url).toBe('string')
+                        expect(body.article.created_at).toBe('2020-05-06T01:14:00.000Z') 
+                        expect(body.article.article_img_url).toBe('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700')
+
+                    })
+            })
+            test.only('200 - includes a comment_count which is the total count of all the comments with this article_id',() => {
+                return request(app)
+                    .get('/api/articles/4')
+                    .expect(200)
+                    .then(({body}) => {
+                        expect(body.article.article_id).toBe(4)
+                        expect(body.article.title).toBe("Student SUES Mitch!")
+                        expect(body.article.topic).toBe("mitch")
+                        expect(body.article.author).toBe("rogersop")
+                        expect(body.article.created_at).toBe('2020-05-06T01:14:00.000Z') 
+                        expect(body.article.article_img_url).toBe('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700')
+                        expect(body.article.comment_count).toBe("0")
+
                     })
             })
             test('404 - responds with 404 "article does not exist" when given a valid id that is not present',() => {
