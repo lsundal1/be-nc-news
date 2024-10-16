@@ -141,7 +141,7 @@ describe('/api/articles', () => {
                         })
                     })
             })
-            test.only('204 - responds with no content when query is of valid type but no results associated with query', () => {
+            test('204 - responds with no content when query is of valid type but no results associated with query', () => {
                 return request(app)
                     .get('/api/articles?topic=bananas')
                     .expect(204)
