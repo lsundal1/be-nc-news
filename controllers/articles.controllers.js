@@ -12,8 +12,10 @@ exports.getArticlesById = (req,res,next) => {
 }
 
 exports.getArticles = (req,res,next) => {
-    
-    fetchArticles().then((articles) => {
+
+    const { sort_by = 'created_at', order = 'DESC' } = req.query
+
+    fetchArticles(sort_by, order).then((articles) => {
         res.status(200).send({articles})
     })
     .catch(next)

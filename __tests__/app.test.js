@@ -98,6 +98,38 @@ describe('/api/articles', () => {
                     expect(res.statusMessage).toBe('Not Found')
                 })
             })
+            test('200 - sorts by column when provided with a valid column', () => {
+                return request(app)
+                    .get('/api/articles?sort_by=article_id')
+                    .expect(200)
+                    .then(({body}) => {
+                        expect(body.articles).toBeSortedBy('article_id', { descending: true })
+                    })
+            })
+            test('200 - sorts by order when provided with a valid order', () => {
+                return request(app)
+                    .get('/api/articles?order=asc')
+                    .expect(200)
+                    .then(({body}) => {
+                        expect(body.articles).toBeSortedBy('created_at', { ascending: true })
+                    })
+            })
+            test('400 - provides 400 error when sort_by is not a valid column', () => {
+                return request(app)
+                    .get('/api/articles?sort_by=dinasours')
+                    .expect(400)
+                    .then(({body}) => {
+                        expect(body.msg).toBe('bad request')
+                    })
+            })
+            test('400 - provides 400 error when order is not a valid order', () => {
+                return request(app)
+                    .get('/api/articles?order=alphabetically')
+                    .expect(400)
+                    .then(({body}) => {
+                        expect(body.msg).toBe('bad request')
+                    })
+            })
         })
         describe('/api/articles/:article_id', () => {
             test('200 - responds with an article when given a valid id',() => {

@@ -2,13 +2,20 @@
 const format = require('pg-format')
 const db = require('../db/connection')
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (sort_by, order) => {
+
+    const validColumns = ['author', 'title', 'article_id', 'topic','created_at', 'votes', 'article_img_url']
+    const validOrder = ['ASC', 'DESC']
     
-    let query = `SELECT articles.author, articles.title, articles.article_id, articles.topic,articles.created_at, articles.votes, articles.article_img_url, 
+    if (!validColumns.includes(sort_by) || !validOrder.includes(order.toUpperCase())) {
+        return Promise.reject({ status: 400, msg: "bad request" });
+    }
+    
+    let query = format(`SELECT articles.author, articles.title, articles.article_id, articles.topic,articles.created_at, articles.votes, articles.article_img_url, 
     COUNT(comments.comment_id) AS comment_count FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY created_at DESC;`
+    GROUP BY articles.article_id ORDER BY %I %s`, sort_by, order.toUpperCase()
+    );
 
     return db.query(query).then(({rows}) => {
         return rows;
