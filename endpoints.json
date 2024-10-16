@@ -34,7 +34,7 @@
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "finds a single article by article_id",
+    "description": "finds a single article by article_id, includes a comment count of all comments associated with this article",
     "queries": [],
     "exampleResponse": {
       "article": [
