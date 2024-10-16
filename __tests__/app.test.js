@@ -130,6 +130,25 @@ describe('/api/articles', () => {
                         expect(body.msg).toBe('bad request')
                     })
             })
+            test('200 - filters by topic when provided with a valid topic', () => {
+                return request(app)
+                    .get('/api/articles?topic=cats')
+                    .expect(200)
+                    .then(({body}) => {
+                        expect(body.articles).toHaveLength(1)
+                        body.articles.forEach(article => {
+                            expect(article.topic).toBe('cats')
+                        })
+                    })
+            })
+            test('204 - responds with no content when query is of valid type but no results associated with query', () => {
+                return request(app)
+                    .get('/api/articles?topic=bananas')
+                    .expect(204)
+                    .then(({res}) => {
+                        expect(res.statusMessage).toBe('No Content')
+                    })
+            })
         })
         describe('/api/articles/:article_id', () => {
             test('200 - responds with an article when given a valid id',() => {
