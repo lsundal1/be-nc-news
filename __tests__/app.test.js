@@ -151,7 +151,7 @@ describe('/api/articles', () => {
             })
         })
         describe('/api/articles/:article_id', () => {
-            test.only('200 - responds with an article when given a valid id',() => {
+            test('200 - responds with an article when given a valid id',() => {
                 return request(app)
                     .get('/api/articles/4')
                     .expect(200)
@@ -165,7 +165,7 @@ describe('/api/articles', () => {
 
                     })
             })
-            test.only('200 - includes a comment_count which is the total count of all the comments with this article_id',() => {
+            test('200 - includes a comment_count which is the total count of all the comments with this article_id',() => {
                 return request(app)
                     .get('/api/articles/4')
                     .expect(200)
