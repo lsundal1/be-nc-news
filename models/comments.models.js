@@ -1,4 +1,3 @@
-const format = require('pg-format')
 const db = require('../db/connection')
 
 exports.removeComment = (comment_id) => {
