@@ -1,33 +1,16 @@
-const express = require('express')
+const express = require("express");
 const app = express();
-const { psqlErrorHandler, customErrorHandler, serverErrorHandler } = require('./error-handlers.js')
-const { getTopics } = require('./controllers/topics.controllers')
-const { getArticles, getArticlesById, getCommentsForArticle, postCommentOnArticle, patchArticleVote } = require('./controllers/articles.controllers')
-const { deleteComment } = require('./controllers/comments.controllers.js')
-const { getUsers } = require('./controllers/users.controllers.js')
-const endpoints = require('./endpoints.json')
+const { psqlErrorHandler, customErrorHandler, serverErrorHandler } = require("./error-handlers.js");
+const endpoints = require("./endpoints.json");
+const apiRouter = require("./routes/api-router.js");
 
-app.get('/api/topics', getTopics)
+app.use(express.json());
 
-app.get('/api/articles', getArticles)
+app.use("/api", apiRouter);
 
-app.get('/api/articles/:article_id', getArticlesById)
-
-app.get('/api/articles/:article_id/comments', getCommentsForArticle)
-
-app.get('/api/users', getUsers)
-
-app.use(express.json())
-
-app.get('/api', (req,res) => {
-    res.status(200).send({endpoints})
-})
-
-app.delete('/api/comments/:comment_id', deleteComment)
-
-app.post('/api/articles/:article_id/comments', postCommentOnArticle)
-
-app.patch('/api/articles/:article_id', patchArticleVote)
+app.get("/api", (req, res) => {
+    res.status(200).send({ endpoints });
+});
 
 app.use(psqlErrorHandler);
 app.use(customErrorHandler);

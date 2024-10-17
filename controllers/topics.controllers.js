@@ -1,4 +1,4 @@
-const { fetchTopics } = require('../models/topics.models')
+const { fetchTopics, fetchTopicByName } = require('../models/topics.models')
 
 exports.getTopics = (req,res,next) => {
     
@@ -7,3 +7,5 @@ exports.getTopics = (req,res,next) => {
     })
     .catch(next)
 }
+
+

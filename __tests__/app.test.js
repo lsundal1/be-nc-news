@@ -25,25 +25,35 @@ describe('GET:/api', () => {
 
 describe('/api/topics', () => {
     describe('GET', () => {
-        test('200 - sends a list of topics to the client', () => {
-            return request(app)
-            .get('/api/topics')
-            .expect(200)
-            .then(({body}) => {
-                expect(body.topics.length).toBe(3)
-                expect
-                    body.topics.forEach(topic => {
-                        expect(typeof topic.description).toBe('string')
-                        expect(typeof topic.slug).toBe('string')
+        describe('/api/topics', () => {
+            test('200 - sends a list of topics to the client', () => {
+                return request(app)
+                .get('/api/topics')
+                .expect(200)
+                .then(({body}) => {
+                    expect(body.topics.length).toBe(3)
+                    expect
+                        body.topics.forEach(topic => {
+                            expect(typeof topic.description).toBe('string')
+                            expect(typeof topic.slug).toBe('string')
+                        })
                     })
+            })
+            test('404 - returns 404 if endpoint does not exist', () => {
+                return request(app)
+                .get('/api/giraffes')
+                .expect(404)
+                .then(({res}) => {
+                    expect(res.statusMessage).toBe('Not Found')
                 })
-        })
-        test('404 - returns 404 if endpoint does not exist', () => {
-            return request(app)
-            .get('/api/giraffes')
-            .expect(404)
-            .then(({res}) => {
-                expect(res.statusMessage).toBe('Not Found')
+            })
+            test('404 - returns 404 if endpoint does not exist', () => {
+                return request(app)
+                .get('/api/giraffes')
+                .expect(404)
+                .then(({res}) => {
+                    expect(res.statusMessage).toBe('Not Found')
+                })
             })
         })
     })
@@ -135,18 +145,30 @@ describe('/api/articles', () => {
                     .get('/api/articles?topic=cats')
                     .expect(200)
                     .then(({body}) => {
+                        
                         expect(body.articles).toHaveLength(1)
                         body.articles.forEach(article => {
                             expect(article.topic).toBe('cats')
                         })
                     })
             })
-            test('204 - responds with no content when query is of valid type but no results associated with query', () => {
+            // empty array could mean that either: the topic does not exist,
+            xtest('404 - responds with 404 not found when topic does not exist', () => {
                 return request(app)
-                    .get('/api/articles?topic=bananas')
-                    .expect(204)
-                    .then(({res}) => {
-                        expect(res.statusMessage).toBe('No Content')
+                    .get('/api/articles?topic=banana')
+                    .expect(404)
+                    .then(({body}) => {
+                        expect(body.msg).toBe('Not Found')
+                    })
+            })
+            // or: the topic exists but there is no content
+            test('200 - responds with 200 and empty array if topic exists but there are no articles associated', () => {
+                return request(app)
+                    .get('/api/articles?topic=paper')
+                    .expect(200)
+                    .then(({body}) => {
+                        expect(body.articles).toHaveLength(0)
+                        expect(body.articles).toEqual([])
                     })
             })
         })
@@ -416,6 +438,18 @@ describe('/api/users', () => {
                 .then(({res}) => {
                     expect(res.statusMessage).toBe('Not Found')
                 })
+            })
+        })
+        describe('/api/users/:username', () => {
+            test('200 - responds with an individual user when given a valid username', () => {
+                return request(app)
+                    .get('/api/users/rogersop')
+                    .expect(200)
+                    .then(({body}) => {
+                        expect(body.user.username).toBe('rogersop')
+                        expect(body.user.name).toBe('paul')
+                        expect(body.user.avatar_url).toBe('https://avatars2.githubusercontent.com/u/24394918?s=400&v=4')
+                    })
             })
         })
     })

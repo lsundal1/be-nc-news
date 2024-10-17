@@ -1,5 +1,4 @@
 
-const format = require('pg-format')
 const db = require('../db/connection')
 
 exports.fetchArticles = (sort_by, order, topic) => {
@@ -11,25 +10,20 @@ exports.fetchArticles = (sort_by, order, topic) => {
         return Promise.reject({ status: 400, msg: "bad request" });
     }
     
-    let query = format(`
+    let query = `
         SELECT articles.author, articles.title, articles.article_id, articles.topic,articles.created_at, articles.votes, articles.article_img_url, 
         COUNT(comments.comment_id) AS comment_count 
         FROM articles
-        LEFT JOIN comments ON articles.article_id = comments.article_id`);
+        LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
     if (topic) {
-        query += format(` WHERE articles.topic = %L`, topic);  
+        query += ` WHERE articles.topic = '${topic}'`  
     }
 
-    query += format(`
-        GROUP BY articles.article_id
-        ORDER BY %I %s;`, sort_by, order.toUpperCase());
-
+    query += ` GROUP BY articles.article_id
+        ORDER BY ${sort_by} ${order.toUpperCase()};`;
+    
     return db.query(query).then(({rows}) => {
-        
-        if(rows.length === 0){
-            return Promise.reject({ status: 204, msg: 'No content' })
-        }
         return rows;
     })
 }
