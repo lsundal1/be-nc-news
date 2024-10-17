@@ -1,6 +1,5 @@
 const { fetchArticles, fetchArticlesById, fetchCommentsForArticle, addCommentOnArticle, updateArticleVote } = require('../models/articles.models')
-const { fetchTopics, fetchTopic } = require('./topics.controllers')
-
+const { fetchTopic } = require('../models/topics.models')
 
 exports.getArticlesById = (req,res,next) => {
     
@@ -15,12 +14,19 @@ exports.getArticlesById = (req,res,next) => {
 exports.getArticles = (req,res,next) => {
 
     const { sort_by = 'created_at', order = 'DESC', topic } = req.query
-
-    fetchArticles(sort_by, order, topic).then((articles) => {
-            
+    if(topic){ 
+        fetchTopic(topic).then(({slug}) => {
+            return fetchArticles(sort_by, order, slug)
+        }).then((articles) => {       
             res.status(200).send({ articles });
         })
         .catch(next)
+    } else {
+        fetchArticles(sort_by, order).then((articles) => {        
+            res.status(200).send({ articles });
+        })
+        .catch(next)
+    }
 }
 
 exports.getCommentsForArticle = (req,res,next) => {
