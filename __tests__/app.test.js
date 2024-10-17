@@ -440,7 +440,7 @@ describe('/api/users', () => {
                 })
             })
         })
-        describe('/api/users/:username', () => {
+        describe.only('/api/users/:username', () => {
             test('200 - responds with an individual user when given a valid username', () => {
                 return request(app)
                     .get('/api/users/rogersop')
@@ -449,6 +449,14 @@ describe('/api/users', () => {
                         expect(body.user.username).toBe('rogersop')
                         expect(body.user.name).toBe('paul')
                         expect(body.user.avatar_url).toBe('https://avatars2.githubusercontent.com/u/24394918?s=400&v=4')
+                    })
+            })
+            test('404 - responds with 404 "Username does not exist" when given a username that does not exist',() => {
+                return request(app)
+                    .get('/api/users/999')
+                    .expect(404)
+                    .then((response) => {
+                        expect(response.body.msg).toBe('Username does not exist');
                     })
             })
         })
