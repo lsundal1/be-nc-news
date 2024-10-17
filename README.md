@@ -2,7 +2,7 @@
 
 This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
 
-You can visit this website here --> https://be-nc-news-upc8.onrender.com/api
+You can visit this api here --> https://be-nc-news-upc8.onrender.com/api
 
 In this repository I built an API for the purpose of accessing application data programmatically. The intention here was to mimic the building of a real world backend service (such as Reddit) which should provide this information to the front end architecture. My database was PostgreSQL, I interacted with it using node-postgres. I used TDD to build each endpoint, ensuring that they function as intended and handle any errors appropriately.
 
