@@ -15,7 +15,6 @@ In order to run this project you will need to install
 In order to run this project locally you will need to create the following files: 
     .env.test - connects to the test database using PGDATABASE=nc_news_test
     .env.development - connects to the development database using PGDATABASE=nc_news
-    .env.production - connects to supabase using DATABASE_URL=postgresql://postgres.xwjqudfimaqvqprwqqhn:NCNewsLS2024@aws-0-eu-west-2.pooler.supabase.com:6543/postgres
 
 To setup the database use command 'run npm setup-dbs'
 To seed the data use command 'run npm seed'
