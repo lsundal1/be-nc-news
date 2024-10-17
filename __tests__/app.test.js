@@ -56,6 +56,26 @@ describe('/api/topics', () => {
                 })
             })
         })
+        describe('/api/topics/:topic_name', () => {
+            test('200 - returns a single topic by topic name', () => {
+                return request(app)
+                .get('/api/topics/mitch')
+                .expect(200)
+                .then(({body}) => {
+                    expect(body.topic.slug).toBe('mitch')
+                    expect(body.topic.description).toBe('The man, the Mitch, the legend')
+                })
+
+            })
+            test('404 - returns a single topic by topic name', () => {
+                return request(app)
+                .get('/api/topics/camel')
+                .expect(404)
+                .then(({body}) => {
+                    expect(body.msg).toBe('Topic does not exist')
+                })
+            })
+        })
     })
 })
 
@@ -145,7 +165,6 @@ describe('/api/articles', () => {
                     .get('/api/articles?topic=cats')
                     .expect(200)
                     .then(({body}) => {
-                        
                         expect(body.articles).toHaveLength(1)
                         body.articles.forEach(article => {
                             expect(article.topic).toBe('cats')
@@ -153,12 +172,12 @@ describe('/api/articles', () => {
                     })
             })
             // empty array could mean that either: the topic does not exist,
-            xtest('404 - responds with 404 not found when topic does not exist', () => {
+            test('404 - responds with 404 not found when topic does not exist', () => {
                 return request(app)
                     .get('/api/articles?topic=banana')
                     .expect(404)
                     .then(({body}) => {
-                        expect(body.msg).toBe('Not Found')
+                        expect(body.msg).toBe('Topic does not exist')
                     })
             })
             // or: the topic exists but there is no content
@@ -382,6 +401,53 @@ describe('/api/articles', () => {
 })
 
 describe('/api/comments', () => {
+    describe('PATCH', () => {
+        test('200 - updates the votes on a comment given the comment\'s comment_id', () => {
+            return request(app)
+                .patch('/api/comments/1')
+                .send({ inc_votes: 4})
+                .expect(200)
+                .then(({body}) => {
+                    expect(body.updatedComment.votes).toBe(20)
+                })
+        })
+        test('404 - responds with 404 "article does not exist" when given a valid id that is not present',() => {
+            return request(app)
+                .patch('/api/comments/999')
+                .send({ inc_votes : 1 })
+                .expect(404)
+                .then(({body}) => {
+                    expect(body.msg).toBe('Comment does not exist');
+                })
+        })
+        test('400 - responds with 400 bad request when given a non-valid id',() => {
+            return request(app)
+                .patch('/api/comments/scooby')
+                .send({ inc_votes : 1 })
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe('Invalid id type')
+                })
+        })
+        test('400 - bad request, body does not include correct properties', () => {
+            return request(app)
+                .patch('/api/comments/4')
+                .send({})
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("bad request");
+                })
+        })
+        test('400 - bad request, body does not include correct properties', () => {
+            return request(app)
+                .patch('/api/comments/4')
+                .send({ inc_votes : '1' })
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("bad request");
+                })
+        })
+    })
     describe('DELETE', () => {
         describe('/api/comments/:comment_id', () => {
             test('204: - deletes comment by comment_id', () => {
@@ -440,7 +506,7 @@ describe('/api/users', () => {
                 })
             })
         })
-        describe.only('/api/users/:username', () => {
+        describe('/api/users/:username', () => {
             test('200 - responds with an individual user when given a valid username', () => {
                 return request(app)
                     .get('/api/users/rogersop')
@@ -461,5 +527,4 @@ describe('/api/users', () => {
             })
         })
     })
-    
 })
