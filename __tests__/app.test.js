@@ -200,6 +200,7 @@ describe('/api/articles', () => {
                         expect(body.article.article_id).toBe(4)
                         expect(body.article.title).toBe("Student SUES Mitch!")
                         expect(body.article.topic).toBe("mitch")
+                        expect(body.article.body).toBe("We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages")
                         expect(body.article.author).toBe("rogersop")
                         expect(body.article.created_at).toBe('2020-05-06T01:14:00.000Z') 
                         expect(body.article.article_img_url).toBe('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700')

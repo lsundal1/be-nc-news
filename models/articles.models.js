@@ -30,7 +30,7 @@ exports.fetchArticles = (sort_by, order, topic) => {
 
 exports.fetchArticlesById = (article_id) => {
 
-    const query = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, 
+    const query = `SELECT articles.author, articles.body, articles.title, articles.article_id, articles.topic, articles.created_at, 
         articles.votes, articles.article_img_url, 
         COUNT(comments.comment_id) AS comment_count
         FROM articles
