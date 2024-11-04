@@ -5,12 +5,14 @@ const {
     getCommentsForArticle,
     postCommentOnArticle,
     patchArticleVote,
+    postArticle
 } = require("../controllers/articles.controllers");
 
 //api/articles
 articlesRouter
     .route('/')
-    .get(getArticles) 
+    .get(getArticles)
+    .post(postArticle) 
 
 articlesRouter 
     .route('/:article_id')
