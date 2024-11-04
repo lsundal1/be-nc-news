@@ -292,6 +292,28 @@ describe('/api/articles', () => {
         })
     })
     describe('POST', () => {
+        describe('/api/articles', () => {
+            test('200 - posts a new article', () => {
+                return request(app)
+                    .post('/api/articles')
+                    .send({ author: 'icellusedkars', title: '30th', body: 'It\'s Lloyd\'s birthday!!', topic: 'mitch', article_img_url: 'https://www.southernliving.com/thmb/jT66ZLlTZCO1-jVxuNTEd5IyVYg=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/GettyImages-157182459-223227efb9bc46468fb7b9988f41ca39.jpg'})
+                    .expect(200)
+                    .then(({body}) => {
+                        console.log(body.newArticle)
+                        expect(body.newArticle).toMatchObject({
+                            article_id: expect.any(Number),
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String), 
+                            votes: 0,
+                            article_img_url: expect.any(String)
+                            // comment_count: 0
+                        })
+                    })
+            })
+        })
         describe('/api/articles/:article_id/comments', () => {
             test('200: - adds a comment for an article', () => {
                 return request(app)

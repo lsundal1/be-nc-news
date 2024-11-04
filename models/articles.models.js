@@ -92,3 +92,17 @@ exports.updateArticleVote = (article, body) => {
         return rows[0]
     })
 }
+
+exports.addArticle = (article) => {
+
+    const { title, topic, author, body, article_img_url } = article
+
+    const query = `
+    INSERT INTO articles (title, topic, author, body, article_img_url)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;`
+    
+    return db.query(query, [title, topic, author, body, article_img_url]).then(({rows}) => {
+        return rows[0]
+    })
+}
