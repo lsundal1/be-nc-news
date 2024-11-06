@@ -136,6 +136,15 @@ describe('/api/articles', () => {
                         expect(body.articles).toBeSortedBy('article_id', { descending: true })
                     })
             })
+            test('200 - sorts by column when provided with a valid column', () => {
+                return request(app)
+                    .get('/api/articles?sort_by=comment_count')
+                    .expect(200)
+                    .then(({body}) => {
+                        console.log(body.articles)
+                        expect(body.articles).toBeSortedBy('comment_count', { descending: true, coerce: true, })
+                    })
+            })
             test('200 - sorts by order when provided with a valid order', () => {
                 return request(app)
                     .get('/api/articles?order=asc')

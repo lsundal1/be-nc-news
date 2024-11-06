@@ -3,7 +3,7 @@ const db = require('../db/connection')
 
 exports.fetchArticles = (sort_by, order, topic) => {
 
-    const validColumns = ['author', 'title', 'article_id', 'topic','created_at', 'votes', 'article_img_url']
+    const validColumns = ['author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'article_img_url', 'comment_count']
     const validOrder = ['ASC', 'DESC']
     
     if (!validColumns.includes(sort_by) || !validOrder.includes(order.toUpperCase())) {
