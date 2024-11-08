@@ -58,16 +58,15 @@ exports.fetchCommentsForArticle = (article) => {
     })
 }  
 
-exports.addCommentOnArticle = (article, comment) => {
+exports.addCommentOnArticle = (article_id, comment) => {
 
-    if( typeof comment.username !== 'string' || typeof comment.body !== 'string'){
-        return Promise.reject({ status: 400, msg: "bad request" });
+    const { body, username } = comment;
+
+    if(typeof comment.body !== "string") {
+        return Promise.reject({status: 400, msg: "Bad request"})
     }
     
-    const { body } = comment;
-    const { article_id, author } = article;
-    
-    const params = [author, body, 0, article_id]
+    const params = [username, body, 0, article_id]
     const query = 
     `INSERT INTO comments (author, body, votes, article_id) VALUES ($1, $2, $3, $4) RETURNING *;` 
     

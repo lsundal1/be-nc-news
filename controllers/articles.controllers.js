@@ -1,5 +1,6 @@
 const { fetchArticles, fetchArticlesById, fetchCommentsForArticle, addCommentOnArticle, updateArticleVote, addArticle } = require('../models/articles.models')
 const { fetchTopic } = require('../models/topics.models')
+const { fetchUserByUsername } = require('../models/users.models')
 
 exports.getArticlesById = (req,res,next) => {
     
@@ -43,12 +44,14 @@ exports.getCommentsForArticle = (req,res,next) => {
 }
 
 exports.postCommentOnArticle = (req,res,next) => {
-
+    
     const { article_id } = req.params
     const comment = req.body
 
-    fetchArticlesById(article_id).then((article) => {
-        return addCommentOnArticle(article, comment)
+    fetchUserByUsername(comment.username).then(({}) => {
+        return fetchArticlesById(article_id)
+    }).then(() => {
+        return addCommentOnArticle(article_id, comment)
     })
     .then((newComment) => {
         res.status(200).send({newComment})
@@ -76,7 +79,5 @@ exports.postArticle = (req,res,next) => {
     addArticle(article).then((newArticle) => {
         res.status(200).send({newArticle})
     })
-    .catch((err) => {
-        console.log(err)
-    })
+    .catch(next)
 }

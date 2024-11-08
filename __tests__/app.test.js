@@ -141,7 +141,6 @@ describe('/api/articles', () => {
                     .get('/api/articles?sort_by=comment_count')
                     .expect(200)
                     .then(({body}) => {
-                        console.log(body.articles)
                         expect(body.articles).toBeSortedBy('comment_count', { descending: true, coerce: true, })
                     })
             })
@@ -309,7 +308,6 @@ describe('/api/articles', () => {
                     .send({ author: 'icellusedkars', title: '30th', body: 'It\'s Lloyd\'s birthday!!', topic: 'mitch', article_img_url: 'https://www.southernliving.com/thmb/jT66ZLlTZCO1-jVxuNTEd5IyVYg=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/GettyImages-157182459-223227efb9bc46468fb7b9988f41ca39.jpg'})
                     .expect(200)
                     .then(({body}) => {
-                        console.log(body.newArticle)
                         expect(body.newArticle).toMatchObject({
                             article_id: expect.any(Number),
                             author: expect.any(String),
@@ -325,10 +323,10 @@ describe('/api/articles', () => {
             })
         })
         describe('/api/articles/:article_id/comments', () => {
-            test('200: - adds a comment for an article', () => {
+            test('200: - adds a comment for an article when username exists', () => {
                 return request(app)
                     .post('/api/articles/4/comments')
-                    .send({username: 'fairyGodMother123', body: "She's a princess, and you're an ogre. That's something no amount of potion is ever going to change."})
+                    .send({username: 'rogersop', body: "She's a princess, and you're an ogre. That's something no amount of potion is ever going to change."})
                     .expect(200)
                     .then(({body}) => {
                         const { newComment } = body
@@ -342,10 +340,19 @@ describe('/api/articles', () => {
                         })
                     })
             })
+            test('404: - responds with 404 if username does not exist', () => {
+                return request(app)
+                    .post('/api/articles/4/comments')
+                    .send({username: 'fairyGodmother123', body: "She's a princess, and you're an ogre. That's something no amount of potion is ever going to change."})
+                    .expect(404)
+                    .then(({body}) => {
+                        expect(body.msg).toBe('Username does not exist')
+                    })
+            })
             test('404 - article_id is valid but does not exist', () => {
                 return request(app)
                     .post('/api/articles/999/comments')
-                    .send({username: 'fairyGodMother123', body: "She's a princess, and you're an ogre. That's something no amount of potion is ever going to change."})
+                    .send({username: 'rogersop', body: "She's a princess, and you're an ogre. That's something no amount of potion is ever going to change."})
                     .expect(404)
                     .then(({body}) => {
                         expect(body.msg).toBe('article does not exist');
@@ -354,7 +361,7 @@ describe('/api/articles', () => {
             test('400 - Invalid article_id', () => {
                 return request(app)
                     .post('/api/articles/hello/comments')
-                    .send({username: 'fairyGodMother123', body: "She's a princess, and you're an ogre. That's something no amount of potion is ever going to change."})
+                    .send({username: 'rogersop', body: "She's a princess, and you're an ogre. That's something no amount of potion is ever going to change."})
                     .expect(400)
                     .then(({body}) => {
                         expect(body.msg).toBe('Invalid id type');
@@ -366,16 +373,25 @@ describe('/api/articles', () => {
                     .send({})
                     .expect(400)
                     .then(({body}) => {
-                        expect(body.msg).toBe("bad request");
+                        expect(body.msg).toBe("Bad request");
                     })
             })
             test('400 - bad request, body does not include correct properties', () => {
                 return request(app)
                     .post('/api/articles/4/comments')
-                    .send({username: 123, body: ['hello my name is']})
+                    .send({username: 123, body: 'hello my name is'})
                     .expect(400)
                     .then(({body}) => {
-                        expect(body.msg).toBe("bad request");
+                        expect(body.msg).toBe("Bad request");
+                    })
+            })
+            test('400 - bad request, body does not include correct properties', () => {
+                return request(app)
+                    .post('/api/articles/4/comments')
+                    .send({username: "rogersop", body: ['what\'s going on']})
+                    .expect(400)
+                    .then(({body}) => {
+                        expect(body.msg).toBe("Bad request");
                     })
             })
         })
@@ -549,7 +565,7 @@ describe('/api/users', () => {
                         expect(body.user.avatar_url).toBe('https://avatars2.githubusercontent.com/u/24394918?s=400&v=4')
                     })
             })
-            test('404 - responds with 404 "Username does not exist" when given a username that does not exist',() => {
+            test('404 - responds with 404 "Username does not exist" when given a username that does not exist', () => {
                 return request(app)
                     .get('/api/users/999')
                     .expect(404)

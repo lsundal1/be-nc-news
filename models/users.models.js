@@ -10,6 +10,10 @@ exports.fetchUsers = () => {
 
 exports.fetchUserByUsername = (username) => {
 
+    if (!username || typeof username !== 'string'){
+        return Promise.reject({ status: 400, msg: 'Bad request' })
+    }
+
     const query = `SELECT * FROM users WHERE username = $1`
 
     return db.query(query,[username]).then(({rows}) => {
